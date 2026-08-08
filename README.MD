@@ -13,8 +13,15 @@ python -m venv venv
 
 y activar el entorno
 
+EN TERMINAL POWERSHELL
+
 ```powershell
-python .\venv\Scripts\activate
+.\venv\Scripts\activate
+```
+
+EN CASO DE USAR UNA TERMINAL LINUX, ENTONCES ACTIVAS EL ENTONRNO CON ESTE COMANDO:
+```linux
+source venv/Scripts/activate
 ```
 
 ### Instalar el proyecto
