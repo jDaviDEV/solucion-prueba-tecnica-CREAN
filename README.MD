@@ -34,7 +34,7 @@ pip install -e .
 EL proyecto viene con las bases de datos separadas en varios archivos .db por limitaciones de almacenamiento en github, por ello hay un script de python disponible en el poryecto dentro de la carpeta "unir_bases_de_datos", ejecuta el script con el siguiente comando:
 
 ```
-pyhton .\unir_bases_de_datos\nueva_base.py
+python .\unir_bases_de_datos\nueva_base.py
 ```
 
 Esto genera una base de datos llamada "base_datos.db" donde estan todas las tablas de las bases de datos que estaban separadas. Una vez ejecutado este script no hace falta volver a ejecutarlo.
