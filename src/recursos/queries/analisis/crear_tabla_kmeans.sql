@@ -1,41 +1,16 @@
 SELECT
-	CASE WHEN grupo_edad = "65+" THEN 1 ELSE 0 END AS "edad_65+",
-	CASE WHEN grupo_edad = "50-65" THEN 1 ELSE 0 END AS "edad_50-65",
-	CASE WHEN grupo_edad = "36-49" THEN 1 ELSE 0 END AS "edad_36-49",
-	CASE WHEN grupo_edad = "26-35" THEN 1 ELSE 0 END AS "edad_26-35",
-	CASE WHEN grupo_edad = "18-25" THEN 1 ELSE 0 END AS "edad_18-25",
-	CASE WHEN desc_genero = "masculino" THEN 1 ELSE 0 END AS genero_masculino,
-	CASE WHEN desc_genero = "femenino" THEN 1 ELSE 0 END AS genero_femenino,
-	CASE WHEN desc_genero = "no binario" THEN 1 ELSE 0 END AS genero_no_binario,
-	CASE WHEN desc_genero = "trans" THEN 1 ELSE 0 END AS genero_trans,
+	CASE
+		WHEN grupo_edad = "18-25" THEN ABS(RANDOM()) % 8 + 18
+		WHEN grupo_edad = "26-35" THEN ABS(RANDOM()) % 10 + 26
+		WHEN grupo_edad = "36-49" THEN ABS(RANDOM()) % 14 + 36
+		WHEN grupo_edad = "50-65" THEN ABS(RANDOM()) % 16 + 50
+		WHEN grupo_edad = "65+" THEN ABS(RANDOM()) % 16 + 66
+	END AS edad,
 	CASE WHEN desc_segmento = "preferencial" THEN 1 ELSE 0 END AS seg_preferencial,
 	CASE WHEN desc_segmento = "plus" THEN 1 ELSE 0 END AS seg_plus,
 	CASE WHEN desc_segmento = "personal" THEN 1 ELSE 0 END AS seg_personal,
-	CASE WHEN desc_tipo_de_vivienda = "NO INFORMA" THEN 1 ELSE 0 END AS vivienda_no_informa,
-	CASE WHEN desc_tipo_de_vivienda = "PROPIA" THEN 1 ELSE 0 END AS vivienda_propia,
-	CASE WHEN desc_tipo_de_vivienda = "FAMILIAR" THEN 1 ELSE 0 END AS vivienda_familiar,
-	CASE WHEN desc_tipo_de_vivienda = "ARRENDADA" THEN 1 ELSE 0 END AS vivienda_arrendada,
-	COALESCE(ingresos_mensuales,0) AS ingresos_mensuales,
-	COALESCE(total_egresos_mensuales,0) AS total_egresos_mensuales,
-	COALESCE(total_activos,0) AS total_activos,
-	COALESCE(total_pasivos,0) AS total_pasivos,
-	COALESCE(total_patrimonio,0) AS total_patrimonio,
-	CASE WHEN producto_cuenta IS NOT NULL THEN 1 ELSE 0 END AS tiene_cuenta,
-	CASE WHEN saldo_cuenta IS NULL THEN 0 ELSE saldo_cuenta END AS saldo_cuenta,
-	CASE WHEN producto_estimador IS NOT NULL THEN 1 ELSE 0 END AS tiene_estimador,
-	CASE WHEN estimador_ingreso IS NULL THEN 0 ELSE estimador_ingreso END AS estimador_ingreso,
-	CASE WHEN producto_bolsillo IS NOT NULL THEN 1 ELSE 0 END AS tiene_bolsillo,
-	CASE WHEN saldo_bolsillo IS NULL THEN 0 ELSE saldo_bolsillo END AS saldo_bolsillo,
-	CASE WHEN producto_fiducuenta IS NOT NULL THEN 1 ELSE 0 END AS tiene_fiducuenta,
-	CASE WHEN saldo_fiducuenta IS NULL THEN 0 ELSE saldo_fiducuenta END AS saldo_fiducuenta,
-	CASE WHEN producto_invesbot IS NOT NULL THEN 1 ELSE 0 END AS tiene_invesbot,
-	CASE WHEN saldo_invesbot IS NULL THEN 0 ELSE saldo_invesbot END AS saldo_invesbot,
-	CASE WHEN producto_inv_virtual IS NOT NULL THEN 1 ELSE 0 END AS tiene_inversion,
-	CASE WHEN saldo_inv_virtual IS NULL THEN 0 ELSE saldo_inv_virtual END AS saldo_inv_virtual,
-	CASE WHEN liquidez IS NULL THEN 0 ELSE liquidez END AS liquidez,
-	CASE WHEN capacidad_de_ahorro IS NULL THEN 0 ELSE capacidad_de_ahorro END AS capacidad_de_ahorro,
-	CASE WHEN capacidad_endeudamiento IS NULL THEN 0 ELSE capacidad_endeudamiento END AS capacidad_endeudamiento,
-	invierte,
-	cantidad_productos_inversion,
-	CASE WHEN porcentaje_inversion IS NULL THEN 0.0 ELSE porcentaje_inversion END AS porcentaje_inversion
+	COALESCE(ingresos_mensuales - total_egresos_mensuales, 0) AS flujo_de_caja,
+	COALESCE(saldo_cuenta + saldo_bolsillo, 0) AS dinero_ahorrado,
+	COALESCE(saldo_fiducuenta + saldo_inv_virtual, 0) AS dinero_invertido,
+	CASE WHEN saldo_invesbot > 0 THEN 1 ELSE 0 END AS usa_invesbot
 FROM tabla_maestra;

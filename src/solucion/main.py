@@ -9,9 +9,9 @@ log = Logger().get_logger()
 def main():
   
   log.info("Iniciando ejecución")
-  # ejecutar_limpieza()
-  # ejecutar_creacion_tabla_maestra()
-  # ejecutar_creacion_tabla_kmeans()
+  ejecutar_limpieza()
+  ejecutar_creacion_tabla_maestra()
+  ejecutar_creacion_tabla_kmeans()
   ejecutar_creacion_cluster()
   log.info("Ejecución finalizada correctamente")
 

@@ -35,98 +35,75 @@ def crear_cluster():
     random_state=10
   )
   
-  # Escalar los datos de la muestra
+  df_muestra_copy = df_muestra.copy()
+  
+
+  variables_financieras_positivas = [
+      "dinero_ahorrado",
+      "dinero_invertido"
+  ]
+  
+  df_muestra[variables_financieras_positivas] = np.log1p(
+    df_muestra[variables_financieras_positivas]
+  )
+  
+  def signed_log(x):
+    """
+    Transformación logarítmica que conserva el signo.
+
+    Ejemplo:
+        -1,000,000 -> valor negativo transformado
+         0         -> 0
+         1,000,000 -> valor positivo transformado
+    """
+    return np.sign(x) * np.log1p(np.abs(x))
+
+
+  df_muestra["flujo_de_caja"] = signed_log(
+    df_muestra["flujo_de_caja"]
+  )
+  
   scaler = StandardScaler()
   
   df_muestra_escalada = scaler.fit_transform(df_muestra)
   
-  # Entrenar Kmeans
   modelo = KMeans(
-    n_clusters = 5,
-    random_state = 10,
-    n_init = "auto"
+    n_clusters=4,
+    random_state=10,
+    n_init="auto"
   )
-  
+
   modelo.fit(df_muestra_escalada)
   
-  df_muestra["cluster"] = modelo.labels_
+  df_muestra_copy["cluster"] = modelo.labels_
   
-  # perfil_jovenes = df_muestra[
-  #   df_muestra["edad_18-25"] == 1
-  # ].groupby("cluster").agg(
-  #   cantidad_clientes=("cluster", "size"),
-  #   ingresos_promedio=("ingresos_mensuales", "mean"),
-  #   patrimonio_promedio=("total_patrimonio", "mean"),
-  #   ahorro_promedio=("saldo_cuenta", "mean"),
-  #   bolsillos_promedio=("saldo_bolsillo", "mean"),
-  #   invesbot_promedio=("saldo_invesbot", "mean"),
-  #   inv_virtual=("saldo_inv_virtual", "mean"),
-  #   fiducuenta=("saldo_fiducuenta", "mean")
-  # ).reset_index()
+  perfil_clusters = (
+      df_muestra_copy
+      .groupby("cluster")
+      .agg(
+          cantidad_clientes=("cluster", "count"),
   
-  # perfil_adulto_joven = df_muestra[
-  #   df_muestra["edad_26-35"] == 1
-  # ].groupby("cluster").agg(
-  #   cantidad_clientes=("cluster", "size"),
-  #   ingresos_promedio=("ingresos_mensuales", "mean"),
-  #   patrimonio_promedio=("total_patrimonio", "mean"),
-  #   ahorro_promedio=("saldo_cuenta", "mean"),
-  #   bolsillos_promedio=("saldo_bolsillo", "mean"),
-  #   invesbot_promedio=("saldo_invesbot", "mean"),
-  #   inv_virtual=("saldo_inv_virtual", "mean"),
-  #   fiducuenta=("saldo_fiducuenta", "mean")
-  # ).reset_index()
+          edad_promedio=("edad", "mean"),
   
-  # perfil_mediana_edad = df_muestra[
-  #   df_muestra["edad_36-49"] == 1
-  # ].groupby("cluster").agg(
-  #   cantidad_clientes=("cluster", "size"),
-  #   ingresos_promedio=("ingresos_mensuales", "mean"),
-  #   patrimonio_promedio=("total_patrimonio", "mean"),
-  #   ahorro_promedio=("saldo_cuenta", "mean"),
-  #   bolsillos_promedio=("saldo_bolsillo", "mean"),
-  #   invesbot_promedio=("saldo_invesbot", "mean"),
-  #   inv_virtual=("saldo_inv_virtual", "mean"),
-  #   fiducuenta=("saldo_fiducuenta", "mean")
-  # ).reset_index()
+          flujo_caja_promedio=("flujo_de_caja", "mean"),
   
-  # perfil_adulto_mayor = df_muestra[
-  #   df_muestra["edad_50-65"] == 1
-  # ].groupby("cluster").agg(
-  #   cantidad_clientes=("cluster", "size"),
-  #   ingresos_promedio=("ingresos_mensuales", "mean"),
-  #   patrimonio_promedio=("total_patrimonio", "mean"),
-  #   ahorro_promedio=("saldo_cuenta", "mean"),
-  #   bolsillos_promedio=("saldo_bolsillo", "mean"),
-  #   invesbot_promedio=("saldo_invesbot", "mean"),
-  #   inv_virtual=("saldo_inv_virtual", "mean"),
-  #   fiducuenta=("saldo_fiducuenta", "mean")
-  # ).reset_index()
+          ahorro_promedio=("dinero_ahorrado", "mean"),
   
-  # perfil_ancianos = df_muestra[
-  #   df_muestra["edad_65+"] == 1
-  # ].groupby("cluster").agg(
-  #   cantidad_clientes=("cluster", "size"),
-  #   ingresos_promedio=("ingresos_mensuales", "mean"),
-  #   patrimonio_promedio=("total_patrimonio", "mean"),
-  #   ahorro_promedio=("saldo_cuenta", "mean"),
-  #   bolsillos_promedio=("saldo_bolsillo", "mean"),
-  #   invesbot_promedio=("saldo_invesbot", "mean"),
-  #   inv_virtual=("saldo_inv_virtual", "mean"),
-  #   fiducuenta=("saldo_fiducuenta", "mean")
-  # ).reset_index()
-        
-  # print("perfil jovenes\n")
-  # print(perfil_jovenes)
-  # print("perfil adulto joven\n")
-  # print(perfil_adulto_joven)
-  # print("perfil mediana edad\n")
-  # print(perfil_mediana_edad)
-  # print("perfil adulto mayor\n")
-  # print(perfil_adulto_mayor)
-  # print("perfil ancianos\n")
-  # print(perfil_ancianos)
+          inversion_promedio=("dinero_invertido", "mean"),
   
+          invesbot_pct=("usa_invesbot", "mean"),
+  
+          preferencial_pct=("seg_preferencial", "mean"),
+  
+          plus_pct=("seg_plus", "mean"),
+  
+          personal_pct=("seg_personal", "mean")
+      )
+      .reset_index()
+    )
+    
+  print(perfil_clusters)
+
   ruta_db = Path(__file__).resolve().parents[2] / "recursos" / "db" / "base_datos.db"
     
   log.info("Creando nueva base de datos")
@@ -135,7 +112,7 @@ def crear_cluster():
   
   
   log.info(f"Creando tabla_muestra_kmeans")
-  df_muestra.to_sql(
+  df_muestra_copy.to_sql(
       name="tabla_muestra_kmeans",
       con=conn_tabla_muestra_kmeans,
       if_exists="replace",
