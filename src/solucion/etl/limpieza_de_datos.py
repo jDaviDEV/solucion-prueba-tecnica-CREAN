@@ -32,6 +32,9 @@ def limpiar_datos() -> dict:
   log.info("Reemplazando campos nulos desc_tipo_de_vivienda en df_clientes")
   df_clientes["desc_tipo_de_vivienda"] = df_clientes["desc_tipo_de_vivienda"].fillna("NO INFORMA")
   log.info("Se ha reemplazado los campos nulos correctamente")
+  
+  # Eliminar registros duplicados y conservar el primero
+  df_clientes = df_clientes.drop_duplicates(subset=["numero_id"], keep="first")
 
   # Nuevos df de las otras tablas con el campo numero id como formato texto
   log.info("Creando dataframes con los datos de cuentas, bolsillos, fiducuentas, inversiones virtuales, estimador e invesbot")
@@ -41,6 +44,7 @@ def limpiar_datos() -> dict:
   df_crean_inv_virtual_cdt = pd.read_sql((ruta_queries / "extraccion_crean_inv_virtual_cdt.sql").read_text(encoding="utf-8"), conn)
   df_estimador = pd.read_sql((ruta_queries / "extraccion_estimador.sql").read_text(encoding="utf-8"), conn)
   df_invesbot = pd.read_sql((ruta_queries / "extraccion_invesbot.sql").read_text(encoding="utf-8"), conn)
+  conn.close()
   log.info("Dataframes creados correctamente")
   
   return dict({

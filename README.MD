@@ -15,7 +15,9 @@ Ya que se tiene toda la información consolidada en solo archiv .db, se puede ha
 
 ### tabla clientes
 - El campo de numero_id se debe reemplazar a tipo texto ya que el valor entero es muy grande y algunas herramientas de visualización de datos llegan a su límite y reemplaza todos los id por un valor predeterminado.
-  
+
+- Hay clientes repetidos. Solo son 8 clientes que se repiten una vez cada uno.
+
 - El campo desc_genero presenta valores nulos equivalentes al 0.011% de la población. Debido a su baja representatividad y con el fin de evitar imputaciones basadas en supuestos no observados, dichos registros fueron excluidos del análisis.
 <br>
 <br>

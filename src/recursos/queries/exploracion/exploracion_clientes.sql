@@ -39,3 +39,8 @@ SELECT
 	"# nulos_patrimonio",
 	CAST(("# nulos_patrimonio" / "total_clientes") * 100.0 AS REAL) AS "% nulos_patrimonio"
 FROM num_clientes_nulos;
+
+SELECT numero_id, COUNT(*) AS cantidad
+FROM clientes
+GROUP BY numero_id
+HAVING COUNT(*) > 1;

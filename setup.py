@@ -14,6 +14,8 @@ setup(
     install_requires=[
         "pandas",
         "pyodbc",
-        "numpy"
+        "numpy",
+        "matplotlib",
+        "scikit-learn"
     ],
 )
